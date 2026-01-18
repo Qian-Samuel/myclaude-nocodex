@@ -23,17 +23,17 @@ type ModelsConfig struct {
 }
 
 var defaultModelsConfig = ModelsConfig{
-	DefaultBackend: "opencode",
-	DefaultModel:   "opencode/grok-code",
+	DefaultBackend: "claude",
+	DefaultModel:   "claude-opus-4-5-20251101",
 	Agents: map[string]AgentModelConfig{
-			"oracle":                  {Backend: "claude", Model: "claude-opus-4-5-20251101", PromptFile: "~/.claude/skills/omo/references/oracle.md", Description: "Technical advisor"},
-			"librarian":               {Backend: "claude", Model: "claude-sonnet-4-5-20250929", PromptFile: "~/.claude/skills/omo/references/librarian.md", Description: "Researcher"},
-			"explore":                 {Backend: "opencode", Model: "opencode/grok-code", PromptFile: "~/.claude/skills/omo/references/explore.md", Description: "Code search"},
-			"develop":                 {Backend: "codex", Model: "", PromptFile: "~/.claude/skills/omo/references/develop.md", Description: "Code development"},
-			"frontend-ui-ux-engineer": {Backend: "gemini", Model: "", PromptFile: "~/.claude/skills/omo/references/frontend-ui-ux-engineer.md", Description: "Frontend engineer"},
-			"document-writer":         {Backend: "gemini", Model: "", PromptFile: "~/.claude/skills/omo/references/document-writer.md", Description: "Documentation"},
-		},
-	}
+		"oracle":                  {Backend: "claude", Model: "claude-opus-4-5-20251101", PromptFile: "~/.claude/skills/omo/references/oracle.md", Description: "Technical advisor"},
+		"librarian":               {Backend: "claude", Model: "claude-sonnet-4-5-20250929", PromptFile: "~/.claude/skills/omo/references/librarian.md", Description: "Researcher"},
+		"explore":                 {Backend: "claude", Model: "claude-haiku-4-5-20251001", PromptFile: "~/.claude/skills/omo/references/explore.md", Description: "Code search"},
+		"develop":                 {Backend: "claude", Model: "claude-opus-4-5-20251101", PromptFile: "~/.claude/skills/omo/references/develop.md", Description: "Code development"},
+		"frontend-ui-ux-engineer": {Backend: "gemini", Model: "", PromptFile: "~/.claude/skills/omo/references/frontend-ui-ux-engineer.md", Description: "Frontend engineer"},
+		"document-writer":         {Backend: "gemini", Model: "", PromptFile: "~/.claude/skills/omo/references/document-writer.md", Description: "Documentation"},
+	},
+}
 
 func loadModelsConfig() *ModelsConfig {
 	home, err := os.UserHomeDir()

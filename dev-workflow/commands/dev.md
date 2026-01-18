@@ -37,11 +37,11 @@ These rules have HIGHEST PRIORITY and override all other instructions:
   - MUST use AskUserQuestion tool as the FIRST action with multiSelect enabled
   - Ask which backends are allowed for this /dev run
   - Options (user can select multiple):
-    - `codex` - Stable, high quality, best cost-performance (default for most tasks)
-    - `claude` - Fast, lightweight (for quick fixes and config changes)
+    - `claude-opus` - High quality code implementation (default for most tasks, model: claude-opus-4-5)
+    - `claude-haiku` - Fast, lightweight (for quick fixes and exploration, model: claude-haiku-4-5)
     - `gemini` - UI/UX specialist (for frontend styling and components)
   - Store the selected backends as `allowed_backends` set for routing in Step 4
-  - Special rule: if user selects ONLY `codex`, then ALL subsequent tasks (including UI/quick-fix) MUST use `codex` (no exceptions)
+  - Special rule: if user selects ONLY `claude-opus`, then ALL subsequent tasks (including UI/quick-fix) MUST use `claude-opus` (no exceptions)
 
 - **Step 1: Requirement Clarification [MANDATORY - DO NOT SKIP]**
   - MUST use AskUserQuestion tool
@@ -56,9 +56,9 @@ These rules have HIGHEST PRIORITY and override all other instructions:
   **How to invoke for analysis**:
   ```bash
   # analysis_backend selection:
-  # - prefer codex if it is in allowed_backends
+  # - prefer claude-opus if it is in allowed_backends
   # - otherwise pick the first backend in allowed_backends
-  codeagent-wrapper --backend {analysis_backend} - <<'EOF'
+  codeagent-wrapper --backend claude --model claude-opus-4-5-20251101 - <<'EOF'
   Analyze the codebase for implementing [feature name].
 
   Requirements:
@@ -142,11 +142,11 @@ These rules have HIGHEST PRIORITY and override all other instructions:
   - Backend routing (must be deterministic and enforceable):
     - Task field: `type: default|ui|quick-fix` (missing → treat as `default`)
     - Preferred backend by type:
-      - `default` → `codex`
+      - `default` → `claude` (model: claude-opus-4-5-20251101)
       - `ui` → `gemini` (enforced when allowed)
       - `quick-fix` → `claude`
-    - If user selected `仅 codex`: all tasks MUST use `codex`
-    - Otherwise, if preferred backend is not in `allowed_backends`, fallback to the first available backend by priority: `codex` → `claude` → `gemini`
+    - If user selected `仅 claude-opus`: all tasks MUST use `claude-opus`
+    - Otherwise, if preferred backend is not in `allowed_backends`, fallback to the first available backend by priority: `claude-opus` → `claude` → `gemini`
   - Build ONE `--parallel` config that includes all tasks in `dev-plan.md` and submit it once via Bash tool:
     ```bash
     # One shot submission - wrapper handles topology + concurrency
@@ -201,7 +201,7 @@ These rules have HIGHEST PRIORITY and override all other instructions:
 - Code coverage ≥90%
 - Tasks based on natural functional boundaries (typically 2-5)
 - Each task has exactly one `type: default|ui|quick-fix`
-- Backend routed by `type`: `default`→codex, `ui`→gemini, `quick-fix`→claude (with allowed_backends fallback)
+- Backend routed by `type`: `default`→claude-opus, `ui`→gemini, `quick-fix`→claude (with allowed_backends fallback)
 - Documentation must be minimal yet actionable
 - No verbose implementations; only essential code
 

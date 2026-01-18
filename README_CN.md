@@ -4,7 +4,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude-Code-blue)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/Version-5.6-green)](https://github.com/cexll/myclaude)
 
-> AI 驱动的开发自动化 - 多后端执行架构 (Codex/Claude/Gemini)
+> AI 驱动的开发自动化 - 多后端执行架构 (Claude/Gemini)
 
 ## 核心概念：多后端架构
 
@@ -13,12 +13,12 @@
 | 角色 | 智能体 | 职责 |
 |------|-------|------|
 | **编排者** | Claude Code | 规划、上下文收集、验证、用户交互 |
-| **执行者** | codeagent-wrapper | 代码编辑、测试执行（Codex/Claude/Gemini 后端）|
+| **执行者** | codeagent-wrapper | 代码编辑、测试执行（Claude/Gemini 后端）|
 
 **为什么分离？**
 - Claude Code 擅长理解上下文和编排复杂工作流
-- 专业后端（Codex 擅长代码、Claude 擅长推理、Gemini 擅长原型）专注执行
-- 通过 `--backend codex|claude|gemini` 匹配模型与任务
+- 专业后端（Claude 擅长代码和推理、Gemini 擅长 UI/UX 原型）专注执行
+- 通过 `--backend claude|gemini` 匹配模型与任务
 
 ## 快速开始（windows上请在Powershell中执行）
 
@@ -43,8 +43,8 @@ python3 install.py --install-dir ~/.claude
 |-------|------|------|------|
 | `oracle` | 技术顾问 | Claude | claude-opus-4-5 |
 | `librarian` | 外部研究 | Claude | claude-sonnet-4-5 |
-| `explore` | 代码库搜索 | OpenCode | grok-code |
-| `develop` | 代码实现 | Codex | gpt-5.2 |
+| `explore` | 代码库搜索 | Claude | claude-haiku-4-5 |
+| `develop` | 代码实现 | Claude | claude-opus-4-5 |
 | `frontend-ui-ux-engineer` | UI/UX 专家 | Gemini | gemini-3-pro |
 | `document-writer` | 文档撰写 | Gemini | gemini-3-flash |
 
@@ -75,14 +75,14 @@ python3 install.py --install-dir ~/.claude
 
 **6 步流程：**
 1. **需求澄清** - 交互式问答明确范围
-2. **Codex 深度分析** - 代码库探索和架构决策
+2. **Claude 深度分析** - 代码库探索和架构决策
 3. **开发计划生成** - 结构化任务分解和测试要求
-4. **并行执行** - Codex 并发执行任务
+4. **并行执行** - Claude 并发执行任务
 5. **覆盖率验证** - 强制 ≥90% 测试覆盖率
 6. **完成总结** - 文件变更和覆盖率报告
 
 **核心特性：**
-- Claude Code 编排，Codex 执行所有代码变更
+- Claude Code 编排，Claude 执行所有代码变更
 - 自动任务并行化提升速度
 - 强制 90% 测试覆盖率门禁
 - 失败自动回滚
@@ -178,7 +178,7 @@ python3 install.py --force
 
 | 模块 | 默认 | 描述 |
 |------|------|------|
-| `dev` | ✓ 启用 | Dev 工作流 + Codex 集成 |
+| `dev` | ✓ 启用 | Dev 工作流 + Claude 集成 |
 | `essentials` | ✓ 启用 | 核心开发命令 |
 | `bmad` | 禁用 | 完整 BMAD 敏捷工作流 |
 | `requirements` | 禁用 | 需求驱动工作流 |
@@ -193,8 +193,8 @@ python3 install.py --force
 ├── commands/                # 斜杠命令 (/dev, /code 等)
 ├── agents/                  # 智能体定义
 ├── skills/
-│   └── codex/
-│       └── SKILL.md         # Codex 集成技能
+│   └── omo/
+│       └── SKILL.md         # OmO 多智能体编排技能
 ├── config.json              # 配置文件
 └── installed_modules.json   # 安装状态
 ```
@@ -234,7 +234,7 @@ export PATH="/opt/myclaude/bin:$PATH"
       "operations": [
         {"type": "merge_dir", "source": "dev-workflow"},
         {"type": "copy_file", "source": "memorys/CLAUDE.md", "target": "CLAUDE.md"},
-        {"type": "copy_file", "source": "skills/codex/SKILL.md", "target": "skills/codex/SKILL.md"},
+        {"type": "copy_file", "source": "skills/omo/SKILL.md", "target": "skills/omo/SKILL.md"},
         {"type": "run_command", "command": "bash install.sh"}
       ]
     }
@@ -252,15 +252,15 @@ export PATH="/opt/myclaude/bin:$PATH"
 
 ---
 
-## Codex 集成
+## Claude 集成
 
-`codex` 技能使 Claude Code 能够将代码执行委托给 Codex CLI。
+codeagent-wrapper 使 Claude Code 能够将代码执行委托给 Claude CLI。
 
 ### 工作流中的使用
 
 ```bash
-# 通过技能调用 Codex
-codeagent-wrapper - <<'EOF'
+# 通过 codeagent-wrapper 调用 Claude
+codeagent-wrapper --backend claude - <<'EOF'
 在 @src/auth.ts 中实现 JWT 验证
 EOF
 ```
@@ -284,7 +284,7 @@ dependencies: backend_api
 EOF
 ```
 
-### 安装 Codex Wrapper
+### 安装 codeagent-wrapper
 
 ```bash
 # 自动（通过 dev 模块）
@@ -342,7 +342,7 @@ reg add "HKCU\Environment" /v Path /t REG_EXPAND_SZ /d "%USERPROFILE%\bin;%PATH%
 
 ### 常见问题
 
-**Codex wrapper 未找到：**
+**codeagent-wrapper 未找到：**
 ```bash
 # 安装程序会自动添加 PATH，检查是否已添加
 if [[ ":$PATH:" != *":$HOME/.claude/bin:"* ]]; then
@@ -409,7 +409,7 @@ Unknown event format: {"type":"assistant", ...}
 **解决方案：**
 1. **检查日志：** 查看 `C:\Users\User\AppData\Local\Temp\codeagent-wrapper-*.log` 分析瓶颈
 2. **调整后端：**
-   - 尝试使用 `gpt-5.1-codex-max` 等更快的模型
+   - 尝试使用 `claude-haiku-4-5` 等更快的模型进行探索任务
    - 在 WSL 环境下运行速度可能更快
 3. **工作区选择：** 使用独立的代码仓库而非包含多个子项目的 monorepo
 
@@ -417,7 +417,8 @@ Unknown event format: {"type":"assistant", ...}
 
 ---
 
-### Q4: 新版 Go 实现的 Codex 权限不足
+<!--
+### Q4: 新版 Go 实现的 Codex 权限不足（旧版 - Codex 已不再作为默认后端）
 
 **问题描述：**
 升级到新版 Go 实现的 Codex 后，出现权限不足的错误。
@@ -440,28 +441,27 @@ network_access = true
 - `network_access = true` - 启用网络访问
 
 **相关 Issue：** [#31](https://github.com/cexll/myclaude/issues/31)
+-->
 
 ---
 
-### Q5: 执行时遇到权限拒绝或沙箱限制
+### Q4: 如何禁用默认的 skip-permissions 模式
 
-**问题描述：**
-运行 codeagent-wrapper 时出现权限错误或沙箱限制。
+**背景说明：**
+默认情况下，codeagent-wrapper 启用 Claude 后端的 skip-permissions 模式：
+- `CODEAGENT_SKIP_PERMISSIONS=true` - 跳过 Claude 权限提示
 
-**解决方案：**
-设置以下环境变量：
+**禁用方法（如需权限保护）：**
 ```bash
-export CODEX_BYPASS_SANDBOX=true
-export CODEAGENT_SKIP_PERMISSIONS=true
+export CODEAGENT_SKIP_PERMISSIONS=false
 ```
 
 或添加到 shell 配置文件（`~/.zshrc` 或 `~/.bashrc`）：
 ```bash
-echo 'export CODEX_BYPASS_SANDBOX=true' >> ~/.zshrc
-echo 'export CODEAGENT_SKIP_PERMISSIONS=true' >> ~/.zshrc
+echo 'export CODEAGENT_SKIP_PERMISSIONS=false' >> ~/.zshrc
 ```
 
-**注意：** 这些设置会绕过安全限制，请仅在可信环境中使用。
+**注意：** 禁用 skip-permissions 模式后，某些操作将需要手动批准。
 
 ---
 
@@ -480,4 +480,4 @@ AGPL-3.0 License - 查看 [LICENSE](LICENSE)
 
 ---
 
-**Claude Code + Codex = 更好的开发** - 编排遇见执行。
+**Claude Code + Claude = 更好的开发** - 编排遇见执行。

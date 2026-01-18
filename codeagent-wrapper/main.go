@@ -21,7 +21,7 @@ const (
 	codexLogLineLimit     = 1000
 	stdinSpecialChars     = "\n\\\"'`$"
 	stderrCaptureLimit    = 4 * 1024
-	defaultBackendName    = "codex"
+	defaultBackendName    = "claude"
 	defaultCodexCommand   = "codex"
 
 	// stdout close reasons

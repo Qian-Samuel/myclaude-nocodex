@@ -9,7 +9,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude-Code-blue)](https://claude.ai/code)
 [![Version](https://img.shields.io/badge/Version-5.6-green)](https://github.com/cexll/myclaude)
 
-> AI-powered development automation with multi-backend execution (Codex/Claude/Gemini)
+> AI-powered development automation with multi-backend execution (Claude/Gemini)
 
 ## Core Concept: Multi-Backend Architecture
 
@@ -18,12 +18,12 @@ This system leverages a **dual-agent architecture** with pluggable AI backends:
 | Role | Agent | Responsibility |
 |------|-------|----------------|
 | **Orchestrator** | Claude Code | Planning, context gathering, verification, user interaction |
-| **Executor** | codeagent-wrapper | Code editing, test execution (Codex/Claude/Gemini backends) |
+| **Executor** | codeagent-wrapper | Code editing, test execution (Claude/Gemini backends) |
 
 **Why this separation?**
 - Claude Code excels at understanding context and orchestrating complex workflows
-- Specialized backends (Codex for code, Claude for reasoning, Gemini for prototyping) excel at focused execution
-- Backend selection via `--backend codex|claude|gemini` matches the model to the task
+- Specialized backends (Claude for code and reasoning, Gemini for UI/UX prototyping) excel at focused execution
+- Backend selection via `--backend claude|gemini` matches the model to the task
 
 ## Quick Start(Please execute in Powershell on Windows)
 
@@ -48,8 +48,8 @@ python3 install.py --install-dir ~/.claude
 |-------|------|---------|-------|
 | `oracle` | Technical advisor | Claude | claude-opus-4-5 |
 | `librarian` | External research | Claude | claude-sonnet-4-5 |
-| `explore` | Codebase search | OpenCode | grok-code |
-| `develop` | Code implementation | Codex | gpt-5.2 |
+| `explore` | Codebase search | Claude | claude-haiku-4-5 |
+| `develop` | Code implementation | Claude | claude-opus-4-5 |
 | `frontend-ui-ux-engineer` | UI/UX specialist | Gemini | gemini-3-pro |
 | `document-writer` | Documentation | Gemini | gemini-3-flash |
 
@@ -80,14 +80,14 @@ python3 install.py --install-dir ~/.claude
 
 **6-Step Process:**
 1. **Requirements Clarification** - Interactive Q&A to clarify scope
-2. **Codex Deep Analysis** - Codebase exploration and architecture decisions
+2. **Claude Deep Analysis** - Codebase exploration and architecture decisions
 3. **Dev Plan Generation** - Structured task breakdown with test requirements
-4. **Parallel Execution** - Codex executes tasks concurrently
+4. **Parallel Execution** - Claude executes tasks concurrently
 5. **Coverage Validation** - Enforce ≥90% test coverage
 6. **Completion Summary** - Report with file changes and coverage stats
 
 **Key Features:**
-- Claude Code orchestrates, Codex executes all code changes
+- Claude Code orchestrates, Claude executes all code changes
 - Automatic task parallelization for speed
 - Mandatory 90% test coverage gate
 - Rollback on failure
@@ -161,7 +161,7 @@ Requirements → Architecture → Sprint Plan → Development → Review → QA
 
 ## Enterprise Workflow Features
 
-- **Multi-backend execution:** `codeagent-wrapper --backend codex|claude|gemini` (default `codex`) so you can match the model to the task without changing workflows.
+- **Multi-backend execution:** `codeagent-wrapper --backend claude|gemini` (default `claude`) so you can match the model to the task without changing workflows.
 - **GitHub workflow commands:** `/gh-create-issue "short need"` creates structured issues; `/gh-issue-implement 123` pulls issue #123, drives development, and prepares the PR.
 - **Skills + hooks activation:** .claude/hooks run automation (tests, reviews), while `.claude/skills/skill-rules.json` auto-suggests the right skills. Keep hooks enabled in `.claude/settings.json` to activate the enterprise workflow helpers.
 
@@ -169,7 +169,8 @@ Requirements → Architecture → Sprint Plan → Development → Review → QA
 
 ## Version Requirements
 
-### Codex CLI
+<!--
+### Codex CLI (Optional - Not used by default)
 **Minimum version:** Check compatibility with your installation
 
 The codeagent-wrapper uses these Codex CLI features:
@@ -184,6 +185,7 @@ The codeagent-wrapper uses these Codex CLI features:
 which codex
 codex --version
 ```
+-->
 
 ### Claude CLI
 **Minimum version:** Check compatibility with your installation
@@ -242,7 +244,7 @@ python3 install.py --force
 
 | Module | Default | Description |
 |--------|---------|-------------|
-| `dev` | ✓ Enabled | Dev workflow + Codex integration |
+| `dev` | ✓ Enabled | Dev workflow + Claude integration |
 | `essentials` | ✓ Enabled | Core development commands |
 | `bmad` | Disabled | Full BMAD agile workflow |
 | `requirements` | Disabled | Requirements-driven workflow |
@@ -257,8 +259,8 @@ python3 install.py --force
 ├── commands/                # Slash commands (/dev, /code, etc.)
 ├── agents/                  # Agent definitions
 ├── skills/
-│   └── codex/
-│       └── SKILL.md         # Codex integration skill
+│   └── omo/
+│       └── SKILL.md         # OmO multi-agent orchestration skill
 ├── config.json              # Configuration
 └── installed_modules.json   # Installation status
 ```
@@ -298,7 +300,7 @@ Edit `config.json` to customize:
       "operations": [
         {"type": "merge_dir", "source": "dev-workflow"},
         {"type": "copy_file", "source": "memorys/CLAUDE.md", "target": "CLAUDE.md"},
-        {"type": "copy_file", "source": "skills/codex/SKILL.md", "target": "skills/codex/SKILL.md"},
+        {"type": "copy_file", "source": "skills/omo/SKILL.md", "target": "skills/omo/SKILL.md"},
         {"type": "run_command", "command": "bash install.sh"}
       ]
     }
@@ -316,15 +318,15 @@ Edit `config.json` to customize:
 
 ---
 
-## Codex Integration
+## Claude Integration
 
-The `codex` skill enables Claude Code to delegate code execution to Codex CLI.
+The codeagent-wrapper enables Claude Code to delegate code execution to Claude CLI.
 
 ### Usage in Workflows
 
 ```bash
-# Codex is invoked via the skill
-codeagent-wrapper - <<'EOF'
+# Claude is invoked via codeagent-wrapper
+codeagent-wrapper --backend claude - <<'EOF'
 implement @src/auth.ts with JWT validation
 EOF
 ```
@@ -348,7 +350,7 @@ create React components consuming the API
 EOF
 ```
 
-### Install Codex Wrapper
+### Install codeagent-wrapper
 
 ```bash
 # Automatic (via dev module)
@@ -406,7 +408,7 @@ reg add "HKCU\Environment" /v Path /t REG_EXPAND_SZ /d "%USERPROFILE%\bin;%PATH%
 
 ### Common Issues
 
-**Codex wrapper not found:**
+**codeagent-wrapper not found:**
 ```bash
 # Installer auto-adds PATH, check if configured
 if [[ ":$PATH:" != *":$HOME/.claude/bin:"* ]]; then
@@ -437,12 +439,10 @@ python3 install.py --module dev --force
 **Backend CLI not found:**
 ```bash
 # Check if backend CLIs are installed
-which codex
 which claude
 which gemini
 
 # Install missing backends
-# Codex: Follow installation instructions at https://codex.docs
 # Claude: Follow installation instructions at https://claude.ai/docs
 # Gemini: Follow installation instructions at https://ai.google.dev/docs
 ```
@@ -452,11 +452,9 @@ which gemini
 # If you see errors like "unknown flag" or "invalid option"
 
 # Check backend CLI version
-codex --version
 claude --version
 gemini --version
 
-# For Codex: Ensure it supports `e`, `--skip-git-repo-check`, `--json`, `-C`, and `resume`
 # For Claude: Ensure it supports `--output-format stream-json`, `--setting-sources`, `-r`
 # For Gemini: Ensure it supports `-o stream-json`, `-y`, `-r`, `-p`
 
@@ -468,7 +466,6 @@ gemini --version
 # If you see "failed to parse JSON output" errors
 
 # Verify the backend outputs stream-json format
-codex e --json "test task"  # Should output newline-delimited JSON
 claude --output-format stream-json -p "test"  # Should output stream JSON
 
 # If not, your backend CLI version may be too old or incompatible
@@ -487,11 +484,9 @@ claude --help | grep "setting-sources"
 **Session resume failures:**
 ```bash
 # Check if session ID is valid
-codex history  # List recent sessions
 claude history
 
 # Ensure backend CLI supports session resumption
-codex resume <session_id> "test"  # Should continue from previous session
 claude -r <session_id> "test"
 
 # If not supported, use new sessions instead of resume mode
@@ -537,7 +532,7 @@ Using `/dev` command for simple features takes too long (over 30 minutes) with n
 **Solution:**
 1. **Check logs:** Review `C:\Users\User\AppData\Local\Temp\codeagent-wrapper-*.log` to identify bottlenecks
 2. **Adjust backend:**
-   - Try faster models like `gpt-5.1-codex-max`
+   - Try faster models like `claude-haiku-4-5` for exploration tasks
    - Running in WSL may be significantly faster
 3. **Workspace:** Use a single repository instead of monorepo with multiple sub-projects
 
@@ -545,7 +540,8 @@ Using `/dev` command for simple features takes too long (over 30 minutes) with n
 
 ---
 
-### Q4: Codex permission denied with new Go version
+<!--
+### Q4: Codex permission denied with new Go version (Legacy - Codex no longer used by default)
 
 **Problem:**
 After upgrading to the new Go-based Codex implementation, execution fails with permission denied errors.
@@ -568,29 +564,27 @@ network_access = true
 - `network_access = true` - Enable network access
 
 **Related Issue:** [#31](https://github.com/cexll/myclaude/issues/31)
+-->
 
 ---
 
-### Q5: How to disable default bypass/skip-permissions mode
+### Q4: How to disable default skip-permissions mode
 
 **Background:**
-By default, codeagent-wrapper enables bypass mode for both Codex and Claude backends:
-- `CODEX_BYPASS_SANDBOX=true` - Bypasses Codex sandbox restrictions
+By default, codeagent-wrapper enables skip-permissions mode for Claude backend:
 - `CODEAGENT_SKIP_PERMISSIONS=true` - Skips Claude permission prompts
 
-**To disable (if you need sandbox/permission protection):**
+**To disable (if you need permission protection):**
 ```bash
-export CODEX_BYPASS_SANDBOX=false
 export CODEAGENT_SKIP_PERMISSIONS=false
 ```
 
 Or add to your shell profile (`~/.zshrc` or `~/.bashrc`):
 ```bash
-echo 'export CODEX_BYPASS_SANDBOX=false' >> ~/.zshrc
 echo 'export CODEAGENT_SKIP_PERMISSIONS=false' >> ~/.zshrc
 ```
 
-**Note:** Disabling bypass mode will require manual approval for certain operations.
+**Note:** Disabling skip-permissions mode will require manual approval for certain operations.
 
 ---
 
@@ -618,4 +612,4 @@ AGPL-3.0 License - see [LICENSE](LICENSE)
 
 ---
 
-**Claude Code + Codex = Better Development** - Orchestration meets execution.
+**Claude Code = Better Development** - Orchestration meets execution.

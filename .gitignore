@@ -1,4 +1,5 @@
 .claude/
+.gemini/
 .claude-trace
 .DS_Store
 **/.DS_Store

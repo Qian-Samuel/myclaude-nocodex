@@ -20,8 +20,8 @@ python3 install.py --module omo
 |-------|------|---------|-------|
 | oracle | Technical advisor | claude | claude-opus-4-5-20251101 |
 | librarian | External research | claude | claude-sonnet-4-5-20250929 |
-| explore | Codebase search | opencode | opencode/grok-code |
-| develop | Code implementation | codex | gpt-5.2 |
+| explore | Codebase search | claude | claude-haiku-4-5-20251001 |
+| develop | Code implementation | claude | claude-opus-4-5-20251101 |
 | frontend-ui-ux-engineer | UI/UX specialist | gemini | gemini-3-pro-preview |
 | document-writer | Documentation | gemini | gemini-3-flash-preview |
 
@@ -74,8 +74,8 @@ Agent-model mappings are configured in `~/.codeagent/models.json`:
 
 ```json
 {
-  "default_backend": "codex",
-  "default_model": "gpt-5.2",
+  "default_backend": "claude",
+  "default_model": "claude-opus-4-5-20251101",
   "agents": {
     "oracle": {
       "backend": "claude",
@@ -90,8 +90,8 @@ Agent-model mappings are configured in `~/.codeagent/models.json`:
       "yolo": true
     },
     "explore": {
-      "backend": "opencode",
-      "model": "opencode/grok-code",
+      "backend": "claude",
+      "model": "claude-haiku-4-5-20251001",
       "description": "Code search"
     },
     "frontend-ui-ux-engineer": {
@@ -105,11 +105,10 @@ Agent-model mappings are configured in `~/.codeagent/models.json`:
       "description": "Documentation"
     },
     "develop": {
-      "backend": "codex",
-      "model": "gpt-5.2",
-      "description": "codex develop",
-      "yolo": true,
-      "reasoning": "xhigh"
+      "backend": "claude",
+      "model": "claude-opus-4-5-20251101",
+      "description": "Code development",
+      "yolo": true
     }
   }
 }
@@ -118,4 +117,4 @@ Agent-model mappings are configured in `~/.codeagent/models.json`:
 ## Requirements
 
 - codeagent-wrapper with `--agent` support
-- Backend CLIs: claude, opencode, codex, gemini
+- Backend CLIs: claude, gemini

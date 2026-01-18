@@ -2144,8 +2144,8 @@ func TestBackendSelectBackend_DefaultOnEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatalf("selectBackend(\"\") error = %v", err)
 	}
-	if _, ok := backend.(CodexBackend); !ok {
-		t.Fatalf("expected default CodexBackend, got %T", backend)
+	if _, ok := backend.(ClaudeBackend); !ok {
+		t.Fatalf("expected default ClaudeBackend, got %T", backend)
 	}
 }
 

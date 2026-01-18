@@ -20,10 +20,11 @@ func TestResolveAgentConfig_Defaults(t *testing.T) {
 		wantPromptFile string
 	}{
 			{"oracle", "claude", "claude-opus-4-5-20251101", "~/.claude/skills/omo/references/oracle.md"},
-			{"librarian", "claude", "claude-sonnet-4-5-20250929", "~/.claude/skills/omo/references/librarian.md"},
-			{"explore", "opencode", "opencode/grok-code", "~/.claude/skills/omo/references/explore.md"},
-			{"frontend-ui-ux-engineer", "gemini", "", "~/.claude/skills/omo/references/frontend-ui-ux-engineer.md"},
-			{"document-writer", "gemini", "", "~/.claude/skills/omo/references/document-writer.md"},
+		{"librarian", "claude", "claude-sonnet-4-5-20250929", "~/.claude/skills/omo/references/librarian.md"},
+		{"explore", "claude", "claude-haiku-4-5-20251001", "~/.claude/skills/omo/references/explore.md"},
+		{"develop", "claude", "claude-opus-4-5-20251101", "~/.claude/skills/omo/references/develop.md"},
+		{"frontend-ui-ux-engineer", "gemini", "", "~/.claude/skills/omo/references/frontend-ui-ux-engineer.md"},
+		{"document-writer", "gemini", "", "~/.claude/skills/omo/references/document-writer.md"},
 		}
 
 	for _, tt := range tests {
@@ -48,11 +49,11 @@ func TestResolveAgentConfig_UnknownAgent(t *testing.T) {
 	t.Setenv("USERPROFILE", home)
 
 	backend, model, promptFile, _, _ := resolveAgentConfig("unknown-agent")
-	if backend != "opencode" {
-		t.Errorf("unknown agent backend = %q, want %q", backend, "opencode")
+	if backend != "claude" {
+		t.Errorf("unknown agent backend = %q, want %q", backend, "claude")
 	}
-	if model != "opencode/grok-code" {
-		t.Errorf("unknown agent model = %q, want %q", model, "opencode/grok-code")
+	if model != "claude-opus-4-5-20251101" {
+		t.Errorf("unknown agent model = %q, want %q", model, "claude-opus-4-5-20251101")
 	}
 	if promptFile != "" {
 		t.Errorf("unknown agent promptFile = %q, want empty", promptFile)
@@ -65,8 +66,8 @@ func TestLoadModelsConfig_NoFile(t *testing.T) {
 	t.Setenv("USERPROFILE", home)
 
 	cfg := loadModelsConfig()
-	if cfg.DefaultBackend != "opencode" {
-		t.Errorf("DefaultBackend = %q, want %q", cfg.DefaultBackend, "opencode")
+	if cfg.DefaultBackend != "claude" {
+		t.Errorf("DefaultBackend = %q, want %q", cfg.DefaultBackend, "claude")
 	}
 	if len(cfg.Agents) != 6 {
 		t.Errorf("len(Agents) = %d, want 6", len(cfg.Agents))
@@ -145,7 +146,7 @@ func TestLoadModelsConfig_InvalidJSON(t *testing.T) {
 
 	cfg := loadModelsConfig()
 	// Should fall back to defaults
-	if cfg.DefaultBackend != "opencode" {
+	if cfg.DefaultBackend != "claude" {
 		t.Errorf("invalid JSON should fallback, got DefaultBackend = %q", cfg.DefaultBackend)
 	}
 }
