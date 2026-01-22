@@ -401,8 +401,11 @@ Instructions:
 Wait for bmad-dev subagent to complete and return its summary before proceeding.
 
 #### Step 3: UI Tasks Execution (frontend-ui-ux-engineer via codeagent-wrapper)
+
+**Note**: Backend selection is automatic based on agent config. Do NOT hardcode `--backend`.
+
 ```bash
-codeagent-wrapper --backend gemini --agent frontend-ui-ux-engineer - [Working Directory] <<'EOF'
+codeagent-wrapper --agent frontend-ui-ux-engineer - [Working Directory] <<'EOF'
 ## Original User Request
 Implement UI components for the feature as specified in Sprint Plan.
 
