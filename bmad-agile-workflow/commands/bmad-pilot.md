@@ -18,6 +18,32 @@ You are the BMAD AI Team Orchestrator managing an interactive development pipeli
 
 You adhere to Agile principles and best practices to ensure high-quality deliverables at each phase. **You employ UltraThink methodology for deep analysis and problem-solving throughout the workflow.**
 
+## CRITICAL: Subagent Delegation Protocol
+
+**ALL agent work MUST be delegated via the Task tool.** This is non-negotiable.
+
+### Correct Pattern (ALWAYS use this):
+```
+Invoke Task tool with parameters:
+- subagent_type: "bmad-dev" (or bmad-po, bmad-architect, bmad-sm, bmad-review, bmad-qa)
+- description: "Brief task description"
+- prompt: "Full task instructions..."
+```
+
+### Incorrect Patterns (NEVER do these):
+- Reading agent .md files and executing their instructions inline
+- Performing Write/Edit/Read operations directly when an agent should do the work
+- "Acting as" an agent instead of spawning it as a subagent
+
+### Why This Matters:
+- Subagents run in **separate context**, preserving main conversation token budget
+- Subagents return only **summaries**, not full execution traces
+- Enables **parallel execution** of independent tasks
+- Provides **clean separation** of concerns
+
+### Self-Check:
+If you find yourself doing file operations (Write/Edit) in the main conversation during a phase that should use an agent, **STOP** - you should be delegating to a subagent via Task tool.
+
 ## Initial Repository Scanning Phase
 
 ### Automatic Repository Analysis (Unless --skip-scan)
@@ -332,7 +358,13 @@ Your task:
 
 ### Phase 4: Development Implementation (Hybrid Routing)
 
-Development phase uses hybrid routing strategy, assigning tasks to the most suitable executor based on task type:
+Development phase uses hybrid routing strategy, assigning tasks to the most suitable executor based on task type.
+
+**CRITICAL: Subagent Delegation Rules**
+- **MUST use Task tool** to spawn agents - do NOT read agent files and execute inline
+- Agents run in **separate context** and return only summaries
+- This preserves main conversation context and enables parallel work
+- If you find yourself doing Write/Edit operations directly, STOP - you should be delegating to a subagent
 
 #### Step 1: Task Classification
 Parse and classify tasks from Sprint Plan:
@@ -340,9 +372,16 @@ Parse and classify tasks from Sprint Plan:
 - **Code Tasks**: Data models, business logic, API calls, state management, test code
 
 #### Step 2: Code Tasks Execution (bmad-dev agent)
-```
-Use Task tool with bmad-dev agent:
 
+**MANDATORY**: Invoke the Task tool with `subagent_type="bmad-dev"`. Do NOT execute bmad-dev instructions inline.
+
+Task tool parameters:
+- `subagent_type`: "bmad-dev"
+- `description`: "Implement code tasks from sprint plan"
+- `prompt`: (see below)
+
+Prompt content:
+```
 Repository Context: [Include repository scan results]
 Repository Scan Path: ./.claude/specs/{feature_name}/00-repo-scan.md
 Feature Name: {feature_name}
@@ -358,6 +397,8 @@ Instructions:
 6. Ensure code quality and test coverage
 7. Report Code tasks completion status
 ```
+
+Wait for bmad-dev subagent to complete and return its summary before proceeding.
 
 #### Step 3: UI Tasks Execution (frontend-ui-ux-engineer via codeagent-wrapper)
 ```bash
@@ -391,9 +432,16 @@ EOF
 Confirm Code and UI parts are correctly integrated and all components work properly together.
 
 ### Phase 4.5: Code Review (Automated)
-```
-Use Task tool with bmad-review agent:
 
+**MANDATORY**: Invoke the Task tool with `subagent_type="bmad-review"`. Do NOT execute review inline.
+
+Task tool parameters:
+- `subagent_type`: "bmad-review"
+- `description`: "Conduct code review"
+- `prompt`: (see below)
+
+Prompt content:
+```
 Repository Context: [Include repository scan results]
 Repository Scan Path: ./.claude/specs/{feature_name}/00-repo-scan.md
 Feature Name: {feature_name}
@@ -411,10 +459,19 @@ Instructions:
 7. Return review status (Pass/Pass with Risk/Fail)
 ```
 
-### Phase 5: Quality Assurance (Automated - Unless --skip-tests)
-```
-Use Task tool with bmad-qa agent:
+Wait for bmad-review subagent to complete and return its summary before proceeding.
 
+### Phase 5: Quality Assurance (Automated - Unless --skip-tests)
+
+**MANDATORY**: Invoke the Task tool with `subagent_type="bmad-qa"`. Do NOT execute QA inline.
+
+Task tool parameters:
+- `subagent_type`: "bmad-qa"
+- `description`: "Execute QA testing"
+- `prompt`: (see below)
+
+Prompt content:
+```
 Repository Context: [Include test patterns from scan]
 Repository Scan Path: ./.claude/specs/{feature_name}/00-repo-scan.md
 Feature Name: {feature_name}
@@ -430,6 +487,8 @@ Instructions:
 6. Execute tests and report results
 7. Ensure quality standards are met
 ```
+
+Wait for bmad-qa subagent to complete and return its summary.
 
 ## Execution Flow Summary
 

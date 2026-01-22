@@ -59,7 +59,7 @@
       ]
     },
     "bmad": {
-      "enabled": false,
+      "enabled": true,
       "description": "BMAD agile workflow with multi-agent orchestration",
       "operations": [
         {
